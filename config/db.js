@@ -1,19 +1,20 @@
-const sql = require("mssql/msnodesqlv8");
+const sql = require("mssql");
 
 const config = {
-  server: process.env.ANKUR, // Read from environment variables
-  database: process.env.Schoolmanagement, // Read from environment variables
+  user: process.env.sa, // SQL Server username
+  password: process.env.sa123, // SQL Server password
+  server: process.env.ANKUR, // Azure SQL Server address
+  database: process.env.SCHOOLMANAGEMENT, // Your database name
   options: {
-    trustedConnection: true,
-    trustServerCertificate: true,
+    encrypt: true, // Required for Azure
+    trustServerCertificate: false, // Should be false for Azure
   },
-  driver: "msnodesqlv8",
 };
 
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then((pool) => {
-    console.log("Connected to SQL Server");
+    console.log("Connected to Azure SQL Server");
     return pool;
   })
   .catch((err) => {
