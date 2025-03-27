@@ -1,24 +1,28 @@
-const sql = require("mssql");
+const sql = require("mssql/msnodesqlv8");
+require("dotenv").config();
 
 const config = {
-  user: process.env.sa, // SQL Server username
-  password: process.env.sa123, // SQL Server password
-  server: process.env.ANKUR, // Azure SQL Server address
-  database: process.env.SCHOOLMANAGEMENT, // Your database name
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT) || 1433,
   options: {
-    encrypt: true, // Required for Azure
-    trustServerCertificate: false, // Should be false for Azure
+    trustedConnection: true,
+    trustServerCertificate: true, // Required for self-signed certificates
+    enableArithAbort: true,
   },
+  driver: process.env.DB_DRIVER,
 };
 
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then((pool) => {
-    console.log("Connected to Azure SQL Server");
+    console.log("✅ Connected to SQL Server");
     return pool;
   })
   .catch((err) => {
-    console.error("Database connection failed:", err);
+    console.error("❌ Database connection failed:", err);
     throw err;
   });
 
